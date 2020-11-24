@@ -43,19 +43,20 @@ sizepicker.oninput = function() {
 }
 
 
-function drawOnTempCanvas(canvas) {
-    let tempWidth = CANVAS_WIDTH;
-    let tempHeight = CANVAS_HEIGHT;
-
-    tempCanvas.width = tempWidth;
-    tempCanvas.height = tempWidth;
-    tempCtx.drawImage(canvas, 0, 0, CANVAS_WIDTH * scale, CANVAS_HEIGHT * scale, 0, 0, tempWidth, tempHeight);
+function drawOnTempCanvas(canvas, width, height, scale) {
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    tempCtx.drawImage(canvas, 0, 0, width * scale, height * scale, 0, 0, width, height);
 }
 
 
 boardsizepicker.oninput = function() {
     let newCanvasWidth =  CANVAS_WIDTH * scale;
     let newCanvasHeight =  CANVAS_HEIGHT * scale;
+
+    tempCanvas.width = newCanvasWidth;
+    tempCanvas.height = newCanvasHeight;
+    tempCtx.drawImage(canvas, 0, 0);
 
     scale = this.value;
     size = sizepicker.value * scale;
@@ -65,12 +66,13 @@ boardsizepicker.oninput = function() {
     canvas.style.width = `${newCanvasWidth}px`
     canvas.style.height = `${newCanvasHeight}px`
 
+    // TODO: Fix redraw when resizing
+    ctx.drawImage(tempCanvas, 0, 0);
 }
 
 
 saveBtn.addEventListener('click', function (event) {
-
-    drawOnTempCanvas(canvas);
+    drawOnTempCanvas(canvas, CANVAS_WIDTH, CANVAS_HEIGHT, scale);
     let download = document.getElementById("downloadLink");
     let image = tempCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 
